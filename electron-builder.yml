@@ -1,7 +1,7 @@
 appId: com.worksy.desktop
 productName: Worksy
 directories:
-  output: release
+  output: dist
 
 files:
   - "out/**/*"
