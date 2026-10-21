@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 permissions:
@@ -39,7 +37,5 @@ jobs:
         if: always()
         with:
           name: worksy-windows-installer
-          path: |
-            release/*.exe
-            dist/*.exe
+          path: dist/*.exe
           retention-days: 7
