@@ -1,5 +1,5 @@
 import { Tray, Menu, app, nativeImage } from 'electron'
-import iconPath from '../../../resources/icon.png?asset'
+import iconPath from '../../../resources/favicon.ico?asset'
 import type { WindowManager } from '../windows/windowManager'
 import type { TaskManager } from './taskManager'
 

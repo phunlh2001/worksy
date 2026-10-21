@@ -12,12 +12,12 @@ extraResources:
 
 win:
   target: nsis
-  icon: resources/icon.png
+  icon: resources/favicon.ico
 
 nsis:
   artifactName: "worksy-${version}.${ext}"
-  installerIcon: resources/icon.png
-  uninstallerIcon: resources/icon.png
+  installerIcon: resources/favicon.ico
+  uninstallerIcon: resources/favicon.ico
 
 publish:
   provider: github
