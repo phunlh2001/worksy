@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           cache: 'yarn'
 
       - name: Install dependencies
@@ -33,3 +33,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer to Actions Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: worksy-windows-installer
+          path: |
+            release/*.exe
+            dist/*.exe
+          retention-days: 7
