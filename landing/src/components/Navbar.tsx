@@ -59,7 +59,7 @@ export function Navbar(): React.JSX.Element {
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com"
+            href="https://github.com/phunlh2001/worksy"
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
