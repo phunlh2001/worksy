@@ -241,34 +241,36 @@ export function HeroSection(): React.JSX.Element {
                         if (e.button === 0) setIsDragging(true)
                       }}
                       onMouseUp={() => setIsDragging(false)}
-                      className={`relative flex items-center justify-between gap-4 px-4 py-3 rounded-2xl bg-[#091524]/95 backdrop-blur-md border transition-all duration-150 shadow-2xl select-none ${
-                        isDragging ? 'cursor-grabbing scale-102' : 'cursor-grab'
+                      className={`group relative flex items-center justify-between gap-4 px-4 py-3 rounded-2xl transition-all duration-300 select-none ${
+                        isDragging
+                          ? 'cursor-grabbing scale-102 bg-slate-950/90 border-cyan-400/80 shadow-2xl backdrop-blur-md ring-2 ring-cyan-400/20'
+                          : 'cursor-grab'
                       } ${
                         isIdlePaused
-                          ? 'border-amber-400 neon-glow-amber ring-2 ring-amber-400/20'
-                          : 'border-cyan-400/80 neon-glow-cyan'
+                          ? 'bg-amber-950/30 hover:bg-amber-950/80 border-amber-400/50 hover:border-amber-400 ring-2 ring-amber-400/20'
+                          : 'bg-slate-950/20 hover:bg-slate-950/85 border-white/10 hover:border-cyan-400/50 backdrop-blur-[2px] hover:backdrop-blur-md hover:shadow-2xl hover:shadow-cyan-950/40'
                       }`}
                     >
                       {/* Grip & Info */}
                       <div className="flex items-center gap-2">
-                        <GripVertical className="w-4 h-4 text-slate-400" />
+                        <GripVertical className="w-4 h-4 text-slate-400/40 group-hover:text-slate-400 transition-colors" />
                         <div className="text-left">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-white max-w-[130px] truncate">
+                            <span className="text-xs font-medium text-slate-300/65 group-hover:text-white group-hover:font-semibold max-w-[130px] truncate transition-colors">
                               {taskName || 'Untitled Task'}
                             </span>
                             {isIdlePaused && (
-                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse">
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
                                 IDLE 3m
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                          <div className="text-[10px] text-slate-400/50 group-hover:text-slate-300 flex items-center gap-1 transition-colors">
                             {isIdlePaused ? (
                               <PauseCircle className="w-2.5 h-2.5 text-amber-400" />
                             ) : (
                               <Clock
-                                className="w-2.5 h-2.5 text-cyan-400 animate-spin"
+                                className="w-2.5 h-2.5 text-cyan-400/70 group-hover:text-cyan-400 animate-spin"
                                 style={{ animationDuration: '3s' }}
                               />
                             )}
@@ -278,17 +280,31 @@ export function HeroSection(): React.JSX.Element {
                       </div>
 
                       {/* Timer Display */}
-                      <div className="flex items-baseline font-mono font-bold text-xs text-white">
-                        <span>{d}d</span>
-                        <span className="text-slate-500 mx-0.5">:</span>
-                        <span>{h}h</span>
-                        <span className="text-slate-500 mx-0.5">:</span>
-                        <span>{m}m</span>
-                        <span className="text-slate-500 mx-0.5">:</span>
+                      <div className="flex items-baseline font-mono font-medium text-xs tracking-tight transition-colors">
+                        <span className="text-slate-200/70 group-hover:text-white transition-colors">
+                          {d}d
+                        </span>
+                        <span className="text-slate-500/40 group-hover:text-slate-400 mx-0.5 transition-colors">
+                          :
+                        </span>
+                        <span className="text-slate-200/70 group-hover:text-white transition-colors">
+                          {h}h
+                        </span>
+                        <span className="text-slate-500/40 group-hover:text-slate-400 mx-0.5 transition-colors">
+                          :
+                        </span>
+                        <span className="text-slate-200/70 group-hover:text-white transition-colors">
+                          {m}m
+                        </span>
+                        <span className="text-slate-500/40 group-hover:text-slate-400 mx-0.5 transition-colors">
+                          :
+                        </span>
                         <span
-                          className={
-                            isIdlePaused ? 'text-amber-400' : 'text-cyan-400 neon-text-cyan'
-                          }
+                          className={`font-bold transition-colors ${
+                            isIdlePaused
+                              ? 'text-amber-400/80 group-hover:text-amber-300'
+                              : 'text-cyan-400/80 group-hover:text-cyan-300 group-hover:neon-text-cyan'
+                          }`}
                         >
                           {s}s
                         </span>
@@ -299,7 +315,7 @@ export function HeroSection(): React.JSX.Element {
                         type="button"
                         onClick={handleStop}
                         title="Stop Session"
-                        className="p-2 rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 transition-all cursor-pointer"
+                        className="p-2 rounded-xl bg-white/5 group-hover:bg-rose-500/20 text-rose-400/60 group-hover:text-rose-400 border border-white/10 group-hover:border-rose-500/30 hover:!bg-rose-500 hover:!text-white transition-all cursor-pointer"
                       >
                         <Square className="w-3.5 h-3.5 fill-current" />
                       </button>
@@ -313,7 +329,7 @@ export function HeroSection(): React.JSX.Element {
                       <span>
                         {isIdlePaused
                           ? 'Move your mouse inside this canvas to auto-resume!'
-                          : 'Try dragging the widget or simulate stepping away:'}
+                          : 'Hover to reveal full controls, or try dragging the widget:'}
                       </span>
                     </div>
 

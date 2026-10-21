@@ -7,17 +7,77 @@ interface TimeDisplayProps {
   className?: string
   size?: 'normal' | 'compact'
   status?: 'IDLE' | 'RUNNING' | 'PAUSED' | 'IDLE_PAUSED'
+  variant?: 'default' | 'dimmed'
 }
 
 export function TimeDisplay({
   totalSeconds,
   className,
   size = 'normal',
-  status = 'IDLE'
+  status = 'IDLE',
+  variant = 'default'
 }: TimeDisplayProps): React.JSX.Element {
   const { days, hours, minutes, seconds } = formatSecondsToTime(totalSeconds)
 
   if (size === 'compact') {
+    if (variant === 'dimmed') {
+      const isIdle = status === 'IDLE_PAUSED'
+      return (
+        <div
+          className={cn(
+            'flex items-baseline font-mono font-medium tracking-tight select-none transition-colors duration-200',
+            className
+          )}
+        >
+          <span className="text-slate-200/70 group-hover:text-white transition-colors">{days}</span>
+          <span className="text-[10px] text-slate-400/50 group-hover:text-slate-400 font-sans mx-0.5 transition-colors">
+            d
+          </span>
+          <span className="text-slate-500/40 group-hover:text-slate-500 mx-0.5 transition-colors">
+            :
+          </span>
+          <span className="text-slate-200/70 group-hover:text-white transition-colors">
+            {hours}
+          </span>
+          <span className="text-[10px] text-slate-400/50 group-hover:text-slate-400 font-sans mx-0.5 transition-colors">
+            h
+          </span>
+          <span className="text-slate-500/40 group-hover:text-slate-500 mx-0.5 transition-colors">
+            :
+          </span>
+          <span className="text-slate-200/70 group-hover:text-white transition-colors">
+            {minutes}
+          </span>
+          <span className="text-[10px] text-slate-400/50 group-hover:text-slate-400 font-sans mx-0.5 transition-colors">
+            m
+          </span>
+          <span className="text-slate-500/40 group-hover:text-slate-500 mx-0.5 transition-colors">
+            :
+          </span>
+          <span
+            className={cn(
+              'font-bold transition-colors',
+              isIdle
+                ? 'text-amber-400/80 group-hover:text-amber-300'
+                : 'text-sky-400/80 group-hover:text-sky-300'
+            )}
+          >
+            {seconds}
+          </span>
+          <span
+            className={cn(
+              'text-[10px] font-sans ml-0.5 transition-colors',
+              isIdle
+                ? 'text-amber-400/60 group-hover:text-amber-400'
+                : 'text-sky-400/60 group-hover:text-sky-400'
+            )}
+          >
+            s
+          </span>
+        </div>
+      )
+    }
+
     return (
       <div
         className={cn(

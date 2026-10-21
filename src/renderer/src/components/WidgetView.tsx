@@ -54,35 +54,36 @@ export function WidgetView({ task, onStop }: WidgetViewProps): React.JSX.Element
     <div
       onMouseDown={handleMouseDown}
       className={cn(
-        'w-full h-full flex items-center justify-between px-3 py-2 bg-white/95 backdrop-blur-md rounded-2xl border shadow-lg transition-all duration-200 select-none cursor-move app-drag-region',
+        'group w-full h-full flex items-center justify-between px-3 py-2 rounded-2xl border transition-all duration-300 select-none cursor-move app-drag-region',
+        isDragging && 'scale-102 shadow-2xl bg-slate-950/90 border-sky-400/60 backdrop-blur-md',
         isIdle
-          ? 'border-amber-400 ring-2 ring-amber-400/20'
-          : 'border-slate-200/90 hover:border-sky-300 ring-1 ring-slate-900/5'
+          ? 'bg-amber-950/30 hover:bg-amber-950/80 border-amber-500/40 hover:border-amber-400 ring-2 ring-amber-400/20 shadow-lg'
+          : 'bg-slate-950/20 hover:bg-slate-950/85 border-white/10 hover:border-slate-700/80 backdrop-blur-[2px] hover:backdrop-blur-md hover:shadow-2xl hover:shadow-black/60'
       )}
     >
       {/* Drag Grip Handle */}
       <div className="flex items-center gap-1.5 min-w-0 pr-2">
-        <GripVertical className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+        <GripVertical className="w-3.5 h-3.5 text-slate-400/40 group-hover:text-slate-400 shrink-0 transition-colors" />
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-1">
             <span
-              className="text-[11px] font-semibold text-slate-800 truncate max-w-[100px]"
+              className="text-[11px] font-medium text-slate-300/65 group-hover:text-white group-hover:font-semibold truncate max-w-[100px] transition-colors"
               title={task.name || 'Untitled Task'}
             >
               {task.name || 'Untitled Task'}
             </span>
             {isIdle && (
-              <span className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-medium bg-amber-100 text-amber-800 shrink-0 animate-pulse">
+              <span className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0 animate-pulse">
                 Idle
               </span>
             )}
           </div>
-          <div className="text-[10px] text-slate-400 flex items-center gap-1">
+          <div className="text-[10px] text-slate-400/50 group-hover:text-slate-400 flex items-center gap-1 transition-colors">
             {isIdle ? (
-              <PauseCircle className="w-2.5 h-2.5 text-amber-500" />
+              <PauseCircle className="w-2.5 h-2.5 text-amber-400" />
             ) : (
               <Clock
-                className="w-2.5 h-2.5 text-sky-500 animate-spin"
+                className="w-2.5 h-2.5 text-sky-400/70 group-hover:text-sky-400 animate-spin"
                 style={{ animationDuration: '4s' }}
               />
             )}
@@ -92,8 +93,13 @@ export function WidgetView({ task, onStop }: WidgetViewProps): React.JSX.Element
       </div>
 
       {/* Real-time Counter */}
-      <div className="flex items-center gap-3 shrink-0">
-        <TimeDisplay totalSeconds={task.totalSeconds} size="compact" status={task.status} />
+      <div className="flex items-center gap-2.5 shrink-0">
+        <TimeDisplay
+          totalSeconds={task.totalSeconds}
+          size="compact"
+          status={task.status}
+          variant="dimmed"
+        />
 
         {/* Stop Icon Button */}
         <button
@@ -103,7 +109,7 @@ export function WidgetView({ task, onStop }: WidgetViewProps): React.JSX.Element
             onStop()
           }}
           title="Stop Tracking"
-          className="app-no-drag flex items-center justify-center w-8 h-8 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-all duration-150 cursor-pointer active:scale-95 shadow-xs border border-rose-100 hover:border-rose-500"
+          className="app-no-drag flex items-center justify-center w-7.5 h-7.5 rounded-xl bg-white/5 group-hover:bg-rose-500/20 text-rose-400/60 group-hover:text-rose-400 border border-white/10 group-hover:border-rose-500/40 hover:!bg-rose-500 hover:!text-white hover:!border-rose-500 transition-all duration-200 cursor-pointer active:scale-95 shadow-xs"
         >
           <Square className="w-3.5 h-3.5 fill-current" />
         </button>

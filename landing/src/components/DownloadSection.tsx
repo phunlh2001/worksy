@@ -38,7 +38,7 @@ export function DownloadSection(): React.JSX.Element {
                 <div>
                   <h3 className="text-xl font-bold text-white">Windows Installer</h3>
                   <p className="text-xs font-mono text-slate-300">
-                    worksy-setup-1.0.0.exe (~111 MB)
+                    worksy-setup-1.0.0.exe (~108 MB)
                   </p>
                 </div>
               </div>
@@ -85,7 +85,7 @@ export function DownloadSection(): React.JSX.Element {
                 <div>
                   <h3 className="text-xl font-bold text-white">Portable Archive</h3>
                   <p className="text-xs font-mono text-slate-300">
-                    worksy-portable-1.0.0.zip (~82 MB)
+                    worksy-portable-1.0.0.zip (~3 MB)
                   </p>
                 </div>
               </div>
