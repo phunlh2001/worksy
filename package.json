@@ -23,7 +23,7 @@
     "dev:landing": "vite landing --port 3000",
     "build:landing": "vite build landing --outDir ../dist-landing --emptyOutDir",
     "preview:landing": "vite preview landing --port 4173",
-    "release:desktop": "yarn build && electron-builder --win --publish onTag"
+    "release:desktop": "electron-vite build && electron-builder --win --publish always"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
