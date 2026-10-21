@@ -65,7 +65,7 @@ export function DownloadSection(): React.JSX.Element {
             </div>
 
             <a
-              href="https://github.com"
+              href="https://github.com/phunlh2001/worksy/releases"
               target="_blank"
               rel="noreferrer"
               className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-sm transition-all duration-150 cursor-pointer neon-glow-emerald active:scale-98"
@@ -112,7 +112,7 @@ export function DownloadSection(): React.JSX.Element {
             </div>
 
             <a
-              href="https://github.com"
+              href="https://github.com/phunlh2001/worksy/releases"
               target="_blank"
               rel="noreferrer"
               className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-emerald-500/30 font-semibold text-sm transition-all duration-150 cursor-pointer hover:border-emerald-400/50 active:scale-98"
@@ -140,7 +140,7 @@ export function DownloadSection(): React.JSX.Element {
           <div className="flex items-center gap-2">
             <FileCode className="w-4 h-4 text-slate-400" />
             <a
-              href="https://github.com"
+              href="https://github.com/phunlh2001/worksy/releases"
               target="_blank"
               rel="noreferrer"
               className="text-emerald-400 hover:underline"

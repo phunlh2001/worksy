@@ -26,7 +26,7 @@ export function Footer(): React.JSX.Element {
             Download
           </a>
           <a
-            href="https://github.com"
+            href="https://github.com/phunlh2001/worksy"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-1.5 hover:text-white transition-colors"
