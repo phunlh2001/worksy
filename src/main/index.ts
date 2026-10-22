@@ -4,12 +4,14 @@ import { TaskManager } from './services/taskManager'
 import { IdleMonitor } from './services/idleMonitor'
 import { WindowManager } from './windows/windowManager'
 import { TrayManager } from './services/trayManager'
+import { UpdateManager } from './services/updateManager'
 import type { CurrentTask } from '../shared/types'
 
 const taskManager = new TaskManager()
 const windowManager = new WindowManager()
 let idleMonitor: IdleMonitor | null = null
 let trayManager: TrayManager | null = null
+let updateManager: UpdateManager | null = null
 
 function broadcastUpdate(task: CurrentTask): void {
   windowManager.broadcast('timer:update', task)
@@ -35,8 +37,12 @@ app.whenReady().then(() => {
 
   // Create windows and tray
   windowManager.createWindows()
-  trayManager = new TrayManager(windowManager, taskManager)
+  trayManager = new TrayManager(windowManager, taskManager, () => updateManager)
   trayManager.init()
+
+  // Initialize GitHub Releases auto updater
+  updateManager = new UpdateManager(windowManager)
+  updateManager.init()
 
   // Initialize Idle Monitor with broadcast callback
   idleMonitor = new IdleMonitor(taskManager, (task) => {

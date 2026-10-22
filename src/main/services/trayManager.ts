@@ -2,15 +2,22 @@ import { Tray, Menu, app, nativeImage } from 'electron'
 import iconPath from '../../../resources/favicon.ico?asset'
 import type { WindowManager } from '../windows/windowManager'
 import type { TaskManager } from './taskManager'
+import type { UpdateManager } from './updateManager'
 
 export class TrayManager {
   private tray: Tray | null = null
   private windowManager: WindowManager
   private taskManager: TaskManager
+  private getUpdateManager: () => UpdateManager | null
 
-  constructor(windowManager: WindowManager, taskManager: TaskManager) {
+  constructor(
+    windowManager: WindowManager,
+    taskManager: TaskManager,
+    getUpdateManager?: () => UpdateManager | null
+  ) {
     this.windowManager = windowManager
     this.taskManager = taskManager
+    this.getUpdateManager = getUpdateManager || (() => null)
   }
 
   public init(): void {
@@ -55,6 +62,13 @@ export class TrayManager {
         label: 'Show Overlay Widget',
         click: (): void => {
           this.windowManager.showWidgetMode()
+        }
+      },
+      {
+        label: 'Check for Updates...',
+        click: (): void => {
+          this.windowManager.showDashboardMode()
+          this.getUpdateManager()?.checkForUpdates()
         }
       },
       { type: 'separator' },

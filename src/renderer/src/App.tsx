@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { WidgetView } from './components/WidgetView'
 import { DashboardView } from './components/DashboardView'
-import type { CurrentTask, SessionTask } from '@shared/types'
+import { UpdateModal } from './components/ui/UpdateModal'
+import type { CurrentTask, SessionTask, UpdateStatus } from '@shared/types'
 
 function App(): React.JSX.Element {
   const isWidget = React.useMemo(() => {
@@ -21,6 +22,7 @@ function App(): React.JSX.Element {
 
   const [sessionTasks, setSessionTasks] = React.useState<SessionTask[]>([])
   const [showStopPrompt, setShowStopPrompt] = React.useState(false)
+  const [updateStatus, setUpdateStatus] = React.useState<UpdateStatus>({ state: 'idle' })
   const [widgetOpacity, setWidgetOpacity] = React.useState<number>(() => {
     try {
       const saved = localStorage.getItem('worksy_widget_opacity')
@@ -55,6 +57,17 @@ function App(): React.JSX.Element {
         console.error('Failed to get widget opacity:', err)
       })
 
+    window.api
+      ?.getUpdateStatus?.()
+      .then((st) => {
+        if (isMounted && st) {
+          setUpdateStatus(st)
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to get update status:', err)
+      })
+
     // Subscribe to real-time timer updates from Electron Main Process
     const unsubscribeUpdate = window.api?.onTimerUpdate?.((task) => {
       setCurrentTask(task)
@@ -76,11 +89,17 @@ function App(): React.JSX.Element {
       }
     })
 
+    // Subscribe to auto-updater status updates
+    const unsubscribeUpdater = window.api?.onUpdateStatus?.((status) => {
+      setUpdateStatus(status)
+    })
+
     return () => {
       isMounted = false
       unsubscribeUpdate?.()
       unsubscribePrompt?.()
       unsubscribeOpacity?.()
+      unsubscribeUpdater?.()
     }
   }, [])
 
@@ -130,29 +149,43 @@ function App(): React.JSX.Element {
     }
   }, [])
 
+  const handleRestartUpdate = React.useCallback(async () => {
+    try {
+      await window.api?.restartAndInstallUpdate?.()
+    } catch (err) {
+      console.error('Failed to restart and install update:', err)
+    }
+  }, [])
+
   if (isWidget) {
     return (
-      <WidgetView
-        task={currentTask}
-        onStop={handleStop}
-        opacity={widgetOpacity}
-        onOpacityChange={handleOpacityChange}
-      />
+      <>
+        <WidgetView
+          task={currentTask}
+          onStop={handleStop}
+          opacity={widgetOpacity}
+          onOpacityChange={handleOpacityChange}
+        />
+        <UpdateModal status={updateStatus} onRestart={handleRestartUpdate} />
+      </>
     )
   }
 
   return (
-    <DashboardView
-      task={currentTask}
-      sessionTasks={sessionTasks}
-      onStart={handleStart}
-      onStop={handleStop}
-      onSavePromptResponse={handleSavePromptResponse}
-      showPrompt={showStopPrompt}
-      onClosePrompt={() => setShowStopPrompt(false)}
-      widgetOpacity={widgetOpacity}
-      onWidgetOpacityChange={handleOpacityChange}
-    />
+    <>
+      <DashboardView
+        task={currentTask}
+        sessionTasks={sessionTasks}
+        onStart={handleStart}
+        onStop={handleStop}
+        onSavePromptResponse={handleSavePromptResponse}
+        showPrompt={showStopPrompt}
+        onClosePrompt={() => setShowStopPrompt(false)}
+        widgetOpacity={widgetOpacity}
+        onWidgetOpacityChange={handleOpacityChange}
+      />
+      <UpdateModal status={updateStatus} onRestart={handleRestartUpdate} />
+    </>
   )
 }
 

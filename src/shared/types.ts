@@ -16,6 +16,19 @@ export interface SessionTask {
   completedAt: string
 }
 
+export type UpdateState =
+  'idle' | 'checking' | 'available' | 'downloading' | 'downloaded' | 'not-available' | 'error'
+
+export interface UpdateStatus {
+  state: UpdateState
+  version?: string
+  percent?: number
+  transferred?: number
+  total?: number
+  bytesPerSecond?: number
+  error?: string
+}
+
 export interface AppApi {
   startTracking: (taskName: string) => Promise<void>
   stopTracking: () => Promise<void>
@@ -32,4 +45,8 @@ export interface AppApi {
   getWidgetOpacity: () => Promise<number>
   setWidgetOpacity: (opacity: number) => Promise<number>
   onWidgetOpacityUpdate: (callback: (opacity: number) => void) => () => void
+  getUpdateStatus: () => Promise<UpdateStatus>
+  checkForUpdates: () => Promise<void>
+  restartAndInstallUpdate: () => Promise<void>
+  onUpdateStatus: (callback: (status: UpdateStatus) => void) => () => void
 }

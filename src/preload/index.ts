@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import type { AppApi, CurrentTask, SessionTask } from '../shared/types'
+import type { AppApi, CurrentTask, SessionTask, UpdateStatus } from '../shared/types'
 
 // Custom APIs for renderer
 const api: AppApi = {
@@ -65,6 +65,24 @@ const api: AppApi = {
     ipcRenderer.on('widget:opacity-updated', subscription)
     return () => {
       ipcRenderer.removeListener('widget:opacity-updated', subscription)
+    }
+  },
+  getUpdateStatus: (): Promise<UpdateStatus> => {
+    return ipcRenderer.invoke('updater:get-status')
+  },
+  checkForUpdates: (): Promise<void> => {
+    return ipcRenderer.invoke('updater:check')
+  },
+  restartAndInstallUpdate: (): Promise<void> => {
+    return ipcRenderer.invoke('updater:restart-and-install')
+  },
+  onUpdateStatus: (callback: (status: UpdateStatus) => void): (() => void) => {
+    const subscription = (_event: Electron.IpcRendererEvent, status: UpdateStatus): void => {
+      callback(status)
+    }
+    ipcRenderer.on('updater:status', subscription)
+    return () => {
+      ipcRenderer.removeListener('updater:status', subscription)
     }
   }
 }

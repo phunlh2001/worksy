@@ -4,18 +4,18 @@ directories:
   output: dist
 
 files:
-  - "out/**/*"
+  - 'out/**/*'
 
 extraResources:
-  - from: "bin"
-    to: "bin"
+  - from: 'bin'
+    to: 'bin'
 
 win:
   target: nsis
   icon: resources/favicon.ico
 
 nsis:
-  artifactName: "worksy-${version}.${ext}"
+  artifactName: 'worksy-${version}.${ext}'
   installerIcon: resources/favicon.ico
   uninstallerIcon: resources/favicon.ico
 

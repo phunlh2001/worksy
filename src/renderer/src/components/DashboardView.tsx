@@ -10,7 +10,8 @@ import {
   Sparkles,
   CheckCircle2,
   Power,
-  Sliders
+  Sliders,
+  RefreshCw
 } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Input } from './ui/Input'
@@ -70,6 +71,21 @@ export function DashboardView({
     } catch (err) {
       console.error('Failed to update auto start setting:', err)
       setAutoStart(autoStart)
+    }
+  }
+
+  const [checkingUpdate, setCheckingUpdate] = React.useState(false)
+
+  const handleCheckUpdate = async (): Promise<void> => {
+    setCheckingUpdate(true)
+    try {
+      await window.api?.checkForUpdates?.()
+    } catch (err) {
+      console.error('Manual check update error:', err)
+    } finally {
+      setTimeout(() => {
+        setCheckingUpdate(false)
+      }, 1500)
     }
   }
 
@@ -223,6 +239,34 @@ export function DashboardView({
                 autoStart ? 'translate-x-4' : 'translate-x-0'
               }`}
             />
+          </button>
+        </div>
+
+        {/* GitHub Auto-Update Status Row */}
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+            <div>
+              <p className="text-xs font-semibold text-slate-800">GitHub Auto-Updates</p>
+              <p className="text-[10px] text-slate-400">
+                Checks for newer releases every time app opens
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleCheckUpdate}
+            disabled={checkingUpdate}
+            className="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+          >
+            {checkingUpdate ? (
+              <>
+                <RefreshCw className="w-2.5 h-2.5 animate-spin text-sky-600" />
+                <span>Checking...</span>
+              </>
+            ) : (
+              <span>Check Now</span>
+            )}
           </button>
         </div>
 
