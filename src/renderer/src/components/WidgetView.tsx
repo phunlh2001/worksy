@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Square, GripVertical, Clock, PauseCircle } from 'lucide-react'
+import { Square, GripVertical, Clock, PauseCircle, Sliders } from 'lucide-react'
 import { TimeDisplay } from './TimeDisplay'
 import type { CurrentTask } from '@shared/types'
 import { cn } from '../lib/utils'
@@ -7,15 +7,25 @@ import { cn } from '../lib/utils'
 interface WidgetViewProps {
   task: CurrentTask
   onStop: () => void
+  opacity?: number
+  onOpacityChange?: (opacity: number) => void
 }
 
-export function WidgetView({ task, onStop }: WidgetViewProps): React.JSX.Element {
+export function WidgetView({
+  task,
+  onStop,
+  opacity = 80,
+  onOpacityChange
+}: WidgetViewProps): React.JSX.Element {
   const [isDragging, setIsDragging] = React.useState(false)
+  const [showSlider, setShowSlider] = React.useState(false)
   const dragStartRef = React.useRef<{ x: number; y: number } | null>(null)
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
-    // Only drag with left click and not on buttons
+    // Only drag with left click and not on interactive buttons/inputs
     if (e.button !== 0) return
+    const target = e.target as HTMLElement
+    if (target.closest('button') || target.closest('input')) return
     setIsDragging(true)
     dragStartRef.current = { x: e.screenX, y: e.screenY }
   }
@@ -49,71 +59,155 @@ export function WidgetView({ task, onStop }: WidgetViewProps): React.JSX.Element
   }, [isDragging])
 
   const isIdle = task.status === 'IDLE_PAUSED'
+  const t = Math.max(0, Math.min(100, opacity)) / 100
+  const isTransparent = t > 0.45
+
+  // Interpolate background and border smoothly from white to faded transparent
+  const r = Math.round(255 * (1 - t) + 15 * t)
+  const g = Math.round(255 * (1 - t) + 23 * t)
+  const b = Math.round(255 * (1 - t) + 42 * t)
+  const a = Number((0.96 * (1 - t) + 0.12 * t).toFixed(2))
+  const borderAlpha = Number((0.85 * (1 - t) + 0.18 * t).toFixed(2))
+  const borderColor =
+    t > 0.4 ? `rgba(255, 255, 255, ${borderAlpha})` : `rgba(203, 213, 225, ${borderAlpha})`
+  const blurPx = Math.round(8 * (1 - t) + 2 * t)
 
   return (
     <div
       onMouseDown={handleMouseDown}
+      style={{
+        backgroundColor: isIdle
+          ? isTransparent
+            ? 'rgba(120, 53, 15, 0.35)'
+            : 'rgba(254, 243, 199, 0.95)'
+          : `rgba(${r}, ${g}, ${b}, ${a})`,
+        borderColor: isIdle ? 'rgba(245, 158, 11, 0.6)' : borderColor,
+        backdropFilter: `blur(${blurPx}px)`,
+        WebkitBackdropFilter: `blur(${blurPx}px)`
+      }}
       className={cn(
-        'group w-full h-full flex items-center justify-between px-3 py-2 rounded-2xl border transition-all duration-300 select-none cursor-move app-drag-region',
-        isDragging && 'scale-102 shadow-2xl bg-slate-950/90 border-sky-400/60 backdrop-blur-md',
-        isIdle
-          ? 'bg-amber-950/30 hover:bg-amber-950/80 border-amber-500/40 hover:border-amber-400 ring-2 ring-amber-400/20 shadow-lg'
-          : 'bg-slate-950/20 hover:bg-slate-950/85 border-white/10 hover:border-slate-700/80 backdrop-blur-[2px] hover:backdrop-blur-md hover:shadow-2xl hover:shadow-black/60'
+        'group relative w-full h-full flex flex-col justify-center px-3 py-2 rounded-2xl border transition-all duration-300 select-none cursor-move app-drag-region',
+        isDragging && 'scale-102 shadow-2xl ring-2 ring-sky-400/40',
+        isIdle && 'ring-2 ring-amber-400/20'
       )}
     >
-      {/* Drag Grip Handle */}
-      <div className="flex items-center gap-1.5 min-w-0 pr-2">
-        <GripVertical className="w-3.5 h-3.5 text-slate-400/40 group-hover:text-slate-400 shrink-0 transition-colors" />
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1">
-            <span
-              className="text-[11px] font-medium text-slate-300/65 group-hover:text-white group-hover:font-semibold truncate max-w-[100px] transition-colors"
-              title={task.name || 'Untitled Task'}
-            >
-              {task.name || 'Untitled Task'}
-            </span>
-            {isIdle && (
-              <span className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0 animate-pulse">
-                Idle
+      <div className="flex items-center justify-between w-full">
+        {/* Drag Grip Handle & Task Info */}
+        <div className="flex items-center gap-1.5 min-w-0 pr-2">
+          <GripVertical
+            className={cn(
+              'w-3.5 h-3.5 shrink-0 transition-colors',
+              isTransparent ? 'text-slate-300/60 drop-shadow-xs' : 'text-slate-400'
+            )}
+          />
+
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-1">
+              <span
+                className={cn(
+                  'text-[11px] font-semibold truncate max-w-[95px] transition-colors',
+                  isTransparent
+                    ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
+                    : 'text-slate-800'
+                )}
+                title={task.name || 'Untitled Task'}
+              >
+                {task.name || 'Untitled Task'}
               </span>
-            )}
+              {isIdle && (
+                <span className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 animate-pulse">
+                  Idle
+                </span>
+              )}
+            </div>
+
+            <div
+              className={cn(
+                'text-[10px] flex items-center gap-1 transition-colors',
+                isTransparent ? 'text-slate-200/90 drop-shadow-xs font-medium' : 'text-slate-500'
+              )}
+            >
+              {isIdle ? (
+                <PauseCircle className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+              ) : (
+                <Clock
+                  className={cn(
+                    'w-2.5 h-2.5 shrink-0 animate-spin',
+                    isTransparent ? 'text-sky-300' : 'text-sky-500'
+                  )}
+                  style={{ animationDuration: '4s' }}
+                />
+              )}
+              <span className="truncate">{isIdle ? 'Paused (Inactivity)' : 'Tracking Active'}</span>
+            </div>
           </div>
-          <div className="text-[10px] text-slate-400/50 group-hover:text-slate-400 flex items-center gap-1 transition-colors">
-            {isIdle ? (
-              <PauseCircle className="w-2.5 h-2.5 text-amber-400" />
-            ) : (
-              <Clock
-                className="w-2.5 h-2.5 text-sky-400/70 group-hover:text-sky-400 animate-spin"
-                style={{ animationDuration: '4s' }}
-              />
+        </div>
+
+        {/* Real-time Counter & Action Controls */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Quick Slider Toggle Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowSlider((prev) => !prev)
+            }}
+            title="Adjust Background Opacity Line"
+            className={cn(
+              'app-no-drag p-1 rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer',
+              isTransparent
+                ? 'text-slate-300 hover:text-white hover:bg-white/10'
+                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100',
+              showSlider && '!opacity-100 bg-sky-500/20 text-sky-300'
             )}
-            <span className="truncate">{isIdle ? 'Paused (Inactivity)' : 'Tracking Active'}</span>
-          </div>
+          >
+            <Sliders className="w-3 h-3" />
+          </button>
+
+          {/* Time Display (Clearly displayed) */}
+          <TimeDisplay
+            totalSeconds={task.totalSeconds}
+            size="compact"
+            status={task.status}
+            isTransparent={isTransparent}
+          />
+
+          {/* Stop Icon Button (Clearly displayed) */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onStop()
+            }}
+            title="Stop Tracking"
+            className="app-no-drag flex items-center justify-center w-7.5 h-7.5 rounded-xl bg-rose-500 hover:bg-rose-600 active:scale-95 text-white transition-all duration-150 cursor-pointer shadow-md shadow-rose-950/40 border border-rose-400/50 shrink-0"
+          >
+            <Square className="w-3.5 h-3.5 fill-current text-white" />
+          </button>
         </div>
       </div>
 
-      {/* Real-time Counter */}
-      <div className="flex items-center gap-2.5 shrink-0">
-        <TimeDisplay
-          totalSeconds={task.totalSeconds}
-          size="compact"
-          status={task.status}
-          variant="dimmed"
-        />
-
-        {/* Stop Icon Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onStop()
-          }}
-          title="Stop Tracking"
-          className="app-no-drag flex items-center justify-center w-7.5 h-7.5 rounded-xl bg-white/5 group-hover:bg-rose-500/20 text-rose-400/60 group-hover:text-rose-400 border border-white/10 group-hover:border-rose-500/40 hover:!bg-rose-500 hover:!text-white hover:!border-rose-500 transition-all duration-200 cursor-pointer active:scale-95 shadow-xs"
+      {/* Inline Control Line Slider */}
+      {showSlider && (
+        <div
+          onMouseDown={(e) => e.stopPropagation()}
+          className={cn(
+            'app-no-drag mt-1.5 pt-1.5 border-t flex items-center gap-2 animate-in fade-in duration-200',
+            isTransparent ? 'border-white/15 text-slate-200' : 'border-slate-200 text-slate-600'
+          )}
         >
-          <Square className="w-3.5 h-3.5 fill-current" />
-        </button>
-      </div>
+          <span className="text-[9px] font-medium shrink-0">White</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={opacity}
+            onChange={(e) => onOpacityChange?.(Number(e.target.value))}
+            className="w-full h-1 bg-gradient-to-r from-slate-200 via-sky-300 to-sky-600 rounded-lg appearance-none cursor-pointer accent-sky-500"
+          />
+          <span className="text-[9px] font-medium shrink-0">Transparent</span>
+        </div>
+      )}
     </div>
   )
 }

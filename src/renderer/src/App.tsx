@@ -21,6 +21,14 @@ function App(): React.JSX.Element {
 
   const [sessionTasks, setSessionTasks] = React.useState<SessionTask[]>([])
   const [showStopPrompt, setShowStopPrompt] = React.useState(false)
+  const [widgetOpacity, setWidgetOpacity] = React.useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('worksy_widget_opacity')
+      return saved !== null ? Number(saved) : 80
+    } catch {
+      return 80
+    }
+  })
 
   React.useEffect(() => {
     let isMounted = true
@@ -36,6 +44,17 @@ function App(): React.JSX.Element {
         console.error('Failed to get session tasks:', err)
       })
 
+    window.api
+      ?.getWidgetOpacity?.()
+      .then((val) => {
+        if (isMounted && typeof val === 'number') {
+          setWidgetOpacity(val)
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to get widget opacity:', err)
+      })
+
     // Subscribe to real-time timer updates from Electron Main Process
     const unsubscribeUpdate = window.api?.onTimerUpdate?.((task) => {
       setCurrentTask(task)
@@ -47,10 +66,21 @@ function App(): React.JSX.Element {
       setShowStopPrompt(true)
     })
 
+    // Subscribe to widget opacity updates from other window
+    const unsubscribeOpacity = window.api?.onWidgetOpacityUpdate?.((val) => {
+      setWidgetOpacity(val)
+      try {
+        localStorage.setItem('worksy_widget_opacity', String(val))
+      } catch {
+        // ignore
+      }
+    })
+
     return () => {
       isMounted = false
       unsubscribeUpdate?.()
       unsubscribePrompt?.()
+      unsubscribeOpacity?.()
     }
   }, [])
 
@@ -90,8 +120,25 @@ function App(): React.JSX.Element {
     }
   }
 
+  const handleOpacityChange = React.useCallback(async (newVal: number) => {
+    setWidgetOpacity(newVal)
+    try {
+      localStorage.setItem('worksy_widget_opacity', String(newVal))
+      await window.api?.setWidgetOpacity?.(newVal)
+    } catch (err) {
+      console.error('Failed to update widget opacity:', err)
+    }
+  }, [])
+
   if (isWidget) {
-    return <WidgetView task={currentTask} onStop={handleStop} />
+    return (
+      <WidgetView
+        task={currentTask}
+        onStop={handleStop}
+        opacity={widgetOpacity}
+        onOpacityChange={handleOpacityChange}
+      />
+    )
   }
 
   return (
@@ -103,6 +150,8 @@ function App(): React.JSX.Element {
       onSavePromptResponse={handleSavePromptResponse}
       showPrompt={showStopPrompt}
       onClosePrompt={() => setShowStopPrompt(false)}
+      widgetOpacity={widgetOpacity}
+      onWidgetOpacityChange={handleOpacityChange}
     />
   )
 }

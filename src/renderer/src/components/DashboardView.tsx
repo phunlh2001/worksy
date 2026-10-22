@@ -9,7 +9,8 @@ import {
   Clock,
   Sparkles,
   CheckCircle2,
-  Power
+  Power,
+  Sliders
 } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Input } from './ui/Input'
@@ -27,6 +28,8 @@ interface DashboardViewProps {
   onSavePromptResponse: (save: boolean, createNew: boolean) => void
   showPrompt: boolean
   onClosePrompt: () => void
+  widgetOpacity?: number
+  onWidgetOpacityChange?: (opacity: number) => void
 }
 
 export function DashboardView({
@@ -36,7 +39,9 @@ export function DashboardView({
   onStop,
   onSavePromptResponse,
   showPrompt,
-  onClosePrompt
+  onClosePrompt,
+  widgetOpacity = 80,
+  onWidgetOpacityChange
 }: DashboardViewProps): React.JSX.Element {
   const [taskInput, setTaskInput] = React.useState(task.name || '')
   const [prevTaskName, setPrevTaskName] = React.useState(task.name)
@@ -219,6 +224,42 @@ export function DashboardView({
               }`}
             />
           </button>
+        </div>
+
+        {/* Docked Widget Background Control Line */}
+        <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex flex-col gap-2.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sliders className="w-3.5 h-3.5 text-sky-600" />
+              <div>
+                <p className="text-xs font-semibold text-slate-800">Docked Widget Background</p>
+                <p className="text-[10px] text-slate-400">
+                  Transition from solid white to a faded, transparent state
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              {widgetOpacity}% Faded
+            </span>
+          </div>
+
+          {/* Slider Control Line */}
+          <div className="flex items-center gap-2.5 pt-1">
+            <span className="text-[10px] font-semibold text-slate-600 shrink-0">Solid White</span>
+            <div className="relative flex-1 flex items-center">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={widgetOpacity}
+                onChange={(e) => onWidgetOpacityChange?.(Number(e.target.value))}
+                className="w-full h-1.5 bg-gradient-to-r from-slate-200 via-sky-300 to-sky-600 rounded-lg appearance-none cursor-pointer accent-sky-600"
+              />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-600 shrink-0">
+              Faded Transparent
+            </span>
+          </div>
         </div>
 
         {/* Ephemeral Daily Session Stamps */}

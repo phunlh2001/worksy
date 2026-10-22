@@ -17,7 +17,7 @@ export function DownloadSection(): React.JSX.Element {
             Download Worksy for <span className="neon-text-emerald">Windows</span>
           </h2>
           <p className="mt-4 text-slate-300 text-sm sm:text-base">
-            Latest release: <strong className="text-white font-mono">v1.0.0</strong> • Built with
+            Latest release: <strong className="text-white font-mono">v1.0.3</strong> • Built with
             Electron 44 & React 19
           </p>
         </div>

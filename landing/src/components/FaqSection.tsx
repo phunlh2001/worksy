@@ -4,24 +4,28 @@ import { ChevronDown, HelpCircle } from 'lucide-react'
 export function FaqSection(): React.JSX.Element {
   const faqs = [
     {
+      q: 'What is the recommended / right way to use Worksy?',
+      a: 'Name your active focus task and click Start Tracking. Worksy automatically minimizes into a compact floating widget docked at desktop top-right. Set your preferred background opacity slider once. From there, just focus on your work—do not manually pause the timer when grabbing coffee or taking a call, as Worksy automatically pauses after 3 minutes of inactivity and resumes when you return. Click Stop to record your session when switching tasks.'
+    },
+    {
+      q: 'How does the widget background opacity slider work?',
+      a: 'A dedicated control line lets you adjust the widget background between crisp solid white (100%) and a faint, faded transparent glass HUD (10%). At transparent levels, background windows, IDEs, and documents remain completely visible beneath the widget, while the timer digits and red Stop button remain prominently sharp with high-contrast text and dropshadows.'
+    },
+    {
       q: 'How does the 3-minute idle detection work?',
       a: 'Worksy queries Windows OS-level idle duration directly via Electron’s native powerMonitor API. It measures system-wide keyboard and mouse inactivity without reading your keystrokes, recording your screen, or logging what apps you are using.'
     },
     {
-      q: 'Does Worksy send my data to the cloud or external servers?',
-      a: 'No. Worksy is 100% offline. There is zero telemetry, zero analytics tracking, and zero internet requirement for timer functionality.'
+      q: 'Does Worksy send my data to the cloud or save files to disk?',
+      a: 'No. Worksy is 100% offline. There is zero telemetry, zero analytics tracking, and zero database storage. As per our core philosophy, all task records live exclusively in-memory during your current desktop session and reset cleanly to zero upon computer shutdown or reboot.'
     },
     {
-      q: 'Are my completed tasks saved permanently to disk?',
-      a: 'No. As per the design philosophy, all task records live exclusively in-memory during your current desktop session. When you shut down or restart your computer, everything resets to a clean slate with zero persistent disk footprint.'
+      q: 'How do I make Worksy start automatically with Windows?',
+      a: 'In the main dashboard Settings, toggle "Launch on Windows Startup" on. Worksy integrates directly with Windows Login Items to start silently in your notification tray every time you power on your desktop.'
     },
     {
       q: 'Can I move the floating overlay timer to another screen?',
-      a: 'Yes! Simply click and drag the tactile grip handle on the left of the floating overlay. You can position it anywhere on your primary or secondary desktop monitors.'
-    },
-    {
-      q: 'How do I run Worksy silently in the background?',
-      a: 'When you click Start Tracking, the main window automatically minimizes and docks into the compact floating overlay. You can also minimize Worksy to the Windows system tray at any time.'
+      a: 'Yes! Simply click and drag the tactile grip handle on the left side of the floating overlay. You can drag and dock it anywhere across your primary or secondary desktop monitors.'
     }
   ]
 
@@ -35,14 +39,14 @@ export function FaqSection(): React.JSX.Element {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <span className="text-xs font-mono font-medium text-cyan-400 px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/30">
-            COMMON QUESTIONS
+            COMMON QUESTIONS & GUIDANCE
           </span>
           <h2 className="mt-4 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
             Frequently Asked <span className="neon-text-cyan">Questions</span>
           </h2>
           <p className="mt-4 text-slate-300 text-sm sm:text-base">
-            Everything you need to know about Worksy&apos;s privacy, idle detection, and
-            architecture.
+            Everything you need to know about using Worksy the right way, including privacy, idle
+            rules, and widget controls.
           </p>
         </div>
 

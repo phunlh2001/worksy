@@ -51,6 +51,21 @@ const api: AppApi = {
   },
   setAutoStart: (enabled: boolean): Promise<boolean> => {
     return ipcRenderer.invoke('app:set-auto-start', enabled)
+  },
+  getWidgetOpacity: (): Promise<number> => {
+    return ipcRenderer.invoke('app:get-widget-opacity')
+  },
+  setWidgetOpacity: (opacity: number): Promise<number> => {
+    return ipcRenderer.invoke('app:set-widget-opacity', opacity)
+  },
+  onWidgetOpacityUpdate: (callback: (opacity: number) => void): (() => void) => {
+    const subscription = (_event: Electron.IpcRendererEvent, opacity: number): void => {
+      callback(opacity)
+    }
+    ipcRenderer.on('widget:opacity-updated', subscription)
+    return () => {
+      ipcRenderer.removeListener('widget:opacity-updated', subscription)
+    }
   }
 }
 

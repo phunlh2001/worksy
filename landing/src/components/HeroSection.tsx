@@ -9,7 +9,8 @@ import {
   PauseCircle,
   RotateCcw,
   MousePointer,
-  CheckCircle2
+  CheckCircle2,
+  Sliders
 } from 'lucide-react'
 
 export function HeroSection(): React.JSX.Element {
@@ -19,6 +20,7 @@ export function HeroSection(): React.JSX.Element {
   const [isIdlePaused, setIsIdlePaused] = React.useState(false)
   const [seconds, setSeconds] = React.useState(42)
   const [widgetPosition, setWidgetPosition] = React.useState({ x: 0, y: 0 })
+  const [widgetOpacity, setWidgetOpacity] = React.useState(80)
   const [isDragging, setIsDragging] = React.useState(false)
   const [showModal, setShowModal] = React.useState(false)
   const [completedSessions, setCompletedSessions] = React.useState([
@@ -234,29 +236,49 @@ export function HeroSection(): React.JSX.Element {
                   {/* Simulated Draggable Floating Overlay Widget */}
                   <div className="flex items-start justify-end py-6">
                     <div
-                      style={{
-                        transform: `translate(${widgetPosition.x}px, ${widgetPosition.y}px)`
-                      }}
                       onMouseDown={(e) => {
                         if (e.button === 0) setIsDragging(true)
                       }}
                       onMouseUp={() => setIsDragging(false)}
+                      style={{
+                        transform: `translate(${widgetPosition.x}px, ${widgetPosition.y}px)`,
+                        backgroundColor: isIdlePaused
+                          ? widgetOpacity > 45
+                            ? 'rgba(120, 53, 15, 0.35)'
+                            : 'rgba(254, 243, 199, 0.95)'
+                          : `rgba(${Math.round(255 * (1 - widgetOpacity / 100) + 15 * (widgetOpacity / 100))}, ${Math.round(255 * (1 - widgetOpacity / 100) + 23 * (widgetOpacity / 100))}, ${Math.round(255 * (1 - widgetOpacity / 100) + 42 * (widgetOpacity / 100))}, ${(0.96 * (1 - widgetOpacity / 100) + 0.12 * (widgetOpacity / 100)).toFixed(2)})`,
+                        borderColor: isIdlePaused
+                          ? 'rgba(245, 158, 11, 0.6)'
+                          : widgetOpacity > 40
+                            ? `rgba(255, 255, 255, ${(0.85 * (1 - widgetOpacity / 100) + 0.18 * (widgetOpacity / 100)).toFixed(2)})`
+                            : `rgba(203, 213, 225, ${(0.85 * (1 - widgetOpacity / 100) + 0.18 * (widgetOpacity / 100)).toFixed(2)})`,
+                        backdropFilter: `blur(${Math.round(8 * (1 - widgetOpacity / 100) + 2 * (widgetOpacity / 100))}px)`,
+                        WebkitBackdropFilter: `blur(${Math.round(8 * (1 - widgetOpacity / 100) + 2 * (widgetOpacity / 100))}px)`
+                      }}
                       className={`group relative flex items-center justify-between gap-4 px-4 py-3 rounded-2xl transition-all duration-300 select-none ${
                         isDragging
-                          ? 'cursor-grabbing scale-102 bg-slate-950/90 border-cyan-400/80 shadow-2xl backdrop-blur-md ring-2 ring-cyan-400/20'
+                          ? 'cursor-grabbing scale-102 ring-2 ring-cyan-400/50 shadow-2xl'
                           : 'cursor-grab'
-                      } ${
-                        isIdlePaused
-                          ? 'bg-amber-950/30 hover:bg-amber-950/80 border-amber-400/50 hover:border-amber-400 ring-2 ring-amber-400/20'
-                          : 'bg-slate-950/20 hover:bg-slate-950/85 border-white/10 hover:border-cyan-400/50 backdrop-blur-[2px] hover:backdrop-blur-md hover:shadow-2xl hover:shadow-cyan-950/40'
-                      }`}
+                      } ${isIdlePaused ? 'ring-2 ring-amber-400/20' : 'border shadow-lg'}`}
                     >
                       {/* Grip & Info */}
                       <div className="flex items-center gap-2">
-                        <GripVertical className="w-4 h-4 text-slate-400/40 group-hover:text-slate-400 transition-colors" />
+                        <GripVertical
+                          className={`w-4 h-4 transition-colors ${
+                            widgetOpacity > 45
+                              ? 'text-slate-300/60 drop-shadow-xs'
+                              : 'text-slate-400'
+                          }`}
+                        />
                         <div className="text-left">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-medium text-slate-300/65 group-hover:text-white group-hover:font-semibold max-w-[130px] truncate transition-colors">
+                            <span
+                              className={`text-xs font-semibold max-w-[130px] truncate transition-colors ${
+                                widgetOpacity > 45
+                                  ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
+                                  : 'text-slate-800'
+                              }`}
+                            >
                               {taskName || 'Untitled Task'}
                             </span>
                             {isIdlePaused && (
@@ -265,12 +287,20 @@ export function HeroSection(): React.JSX.Element {
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400/50 group-hover:text-slate-300 flex items-center gap-1 transition-colors">
+                          <div
+                            className={`text-[10px] flex items-center gap-1 transition-colors ${
+                              widgetOpacity > 45
+                                ? 'text-slate-200/90 drop-shadow-xs font-medium'
+                                : 'text-slate-500'
+                            }`}
+                          >
                             {isIdlePaused ? (
                               <PauseCircle className="w-2.5 h-2.5 text-amber-400" />
                             ) : (
                               <Clock
-                                className="w-2.5 h-2.5 text-cyan-400/70 group-hover:text-cyan-400 animate-spin"
+                                className={`w-2.5 h-2.5 animate-spin ${
+                                  widgetOpacity > 45 ? 'text-cyan-300' : 'text-cyan-600'
+                                }`}
                                 style={{ animationDuration: '3s' }}
                               />
                             )}
@@ -279,81 +309,122 @@ export function HeroSection(): React.JSX.Element {
                         </div>
                       </div>
 
-                      {/* Timer Display */}
-                      <div className="flex items-baseline font-mono font-medium text-xs tracking-tight transition-colors">
-                        <span className="text-slate-200/70 group-hover:text-white transition-colors">
+                      {/* Timer Display (Clearly displayed) */}
+                      <div className="flex items-baseline font-mono font-bold text-xs tracking-tight transition-colors">
+                        <span
+                          className={
+                            widgetOpacity > 45
+                              ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
+                              : 'text-slate-900'
+                          }
+                        >
                           {d}d
                         </span>
-                        <span className="text-slate-500/40 group-hover:text-slate-400 mx-0.5 transition-colors">
-                          :
-                        </span>
-                        <span className="text-slate-200/70 group-hover:text-white transition-colors">
+                        <span className="text-slate-400 mx-0.5">:</span>
+                        <span
+                          className={
+                            widgetOpacity > 45
+                              ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
+                              : 'text-slate-900'
+                          }
+                        >
                           {h}h
                         </span>
-                        <span className="text-slate-500/40 group-hover:text-slate-400 mx-0.5 transition-colors">
-                          :
-                        </span>
-                        <span className="text-slate-200/70 group-hover:text-white transition-colors">
+                        <span className="text-slate-400 mx-0.5">:</span>
+                        <span
+                          className={
+                            widgetOpacity > 45
+                              ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
+                              : 'text-slate-900'
+                          }
+                        >
                           {m}m
                         </span>
-                        <span className="text-slate-500/40 group-hover:text-slate-400 mx-0.5 transition-colors">
-                          :
-                        </span>
+                        <span className="text-slate-400 mx-0.5">:</span>
                         <span
-                          className={`font-bold transition-colors ${
+                          className={`font-black transition-colors ${
                             isIdlePaused
-                              ? 'text-amber-400/80 group-hover:text-amber-300'
-                              : 'text-cyan-400/80 group-hover:text-cyan-300 group-hover:neon-text-cyan'
+                              ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]'
+                              : widgetOpacity > 45
+                                ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(0,245,255,0.8)]'
+                                : 'text-cyan-600'
                           }`}
                         >
                           {s}s
                         </span>
                       </div>
 
-                      {/* Stop Button */}
+                      {/* Stop Button (Clearly displayed) */}
                       <button
                         type="button"
                         onClick={handleStop}
                         title="Stop Session"
-                        className="p-2 rounded-xl bg-white/5 group-hover:bg-rose-500/20 text-rose-400/60 group-hover:text-rose-400 border border-white/10 group-hover:border-rose-500/30 hover:!bg-rose-500 hover:!text-white transition-all cursor-pointer"
+                        className="p-2 rounded-xl bg-rose-500 hover:bg-rose-600 active:scale-95 text-white shadow-md shadow-rose-950/40 border border-rose-400/50 transition-all cursor-pointer"
                       >
-                        <Square className="w-3.5 h-3.5 fill-current" />
+                        <Square className="w-3.5 h-3.5 fill-current text-white" />
                       </button>
                     </div>
                   </div>
 
                   {/* Simulation Helper Controls */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800/80 text-xs font-mono">
-                    <div className="flex items-center gap-2 text-slate-400 text-left">
-                      <MousePointer className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                      <span>
-                        {isIdlePaused
-                          ? 'Move your mouse inside this canvas to auto-resume!'
-                          : 'Hover to reveal full controls, or try dragging the widget:'}
-                      </span>
+                  <div className="flex flex-col gap-3 pt-4 border-t border-slate-800/80 text-xs font-mono">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 text-slate-400 text-left">
+                        <MousePointer className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                        <span>
+                          {isIdlePaused
+                            ? 'Move your mouse inside this canvas to auto-resume!'
+                            : 'Drag the widget or simulate stepping away:'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleSimulateIdle}
+                          className={`px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition-all ${
+                            isIdlePaused
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                              : 'bg-amber-500/10 text-amber-400 border-amber-500/40 hover:bg-amber-500/20'
+                          }`}
+                        >
+                          {isIdlePaused ? 'Resume Tracking' : '⚡ Simulate 3-Min Inactivity'}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setWidgetPosition({ x: 0, y: 0 })}
+                          title="Reset Widget Position"
+                          className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleSimulateIdle}
-                        className={`px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition-all ${
-                          isIdlePaused
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                            : 'bg-amber-500/10 text-amber-400 border-amber-500/40 hover:bg-amber-500/20'
-                        }`}
-                      >
-                        {isIdlePaused ? 'Resume Tracking' : '⚡ Simulate 3-Min Inactivity'}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setWidgetPosition({ x: 0, y: 0 })}
-                        title="Reset Widget Position"
-                        className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                      </button>
+                    {/* Background Opacity Control Line */}
+                    <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-800/50">
+                      <div className="flex items-center gap-2 text-slate-300 shrink-0">
+                        <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+                        <span className="text-[11px]">Background Line Control:</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-1 max-w-sm">
+                        <span className="text-[10px] text-slate-400 shrink-0">Solid White</span>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={widgetOpacity}
+                          onChange={(e) => setWidgetOpacity(Number(e.target.value))}
+                          className="w-full h-1.5 bg-gradient-to-r from-slate-200 via-cyan-300 to-cyan-500 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                        />
+                        <span className="text-[10px] text-slate-400 shrink-0">
+                          Faded Transparent
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded bg-cyan-950/70 shrink-0">
+                        {widgetOpacity}% Faded
+                      </span>
                     </div>
                   </div>
                 </div>

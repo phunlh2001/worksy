@@ -29,4 +29,7 @@ export interface AppApi {
   isWidgetWindow: () => boolean
   getAutoStart: () => Promise<boolean>
   setAutoStart: (enabled: boolean) => Promise<boolean>
+  getWidgetOpacity: () => Promise<number>
+  setWidgetOpacity: (opacity: number) => Promise<number>
+  onWidgetOpacityUpdate: (callback: (opacity: number) => void) => () => void
 }

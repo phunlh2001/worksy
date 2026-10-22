@@ -76,6 +76,18 @@ app.whenReady().then(() => {
     }
   })
 
+  // IPC: Widget Opacity / Transparency Settings
+  let widgetOpacity = 80
+  ipcMain.handle('app:get-widget-opacity', () => {
+    return widgetOpacity
+  })
+
+  ipcMain.handle('app:set-widget-opacity', (_, opacity: number) => {
+    widgetOpacity = Math.max(0, Math.min(100, opacity))
+    windowManager.broadcast('widget:opacity-updated', widgetOpacity)
+    return widgetOpacity
+  })
+
   // IPC: Start Tracking
   ipcMain.handle('tracking:start', (_, taskName: string) => {
     const task = taskManager.startTask(taskName)

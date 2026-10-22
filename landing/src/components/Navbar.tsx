@@ -32,7 +32,7 @@ export function Navbar(): React.JSX.Element {
               Worksy
             </span>
             <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              v1.0.0
+              v1.0.3
             </span>
           </div>
         </a>

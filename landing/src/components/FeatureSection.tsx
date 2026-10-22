@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Activity, Layers, Clock, ShieldCheck, Power, Zap, Move } from 'lucide-react'
+import { Activity, Layers, Clock, ShieldCheck, Power, Zap, Sliders } from 'lucide-react'
 
 export function FeatureSection(): React.JSX.Element {
   const features = [
@@ -22,21 +22,30 @@ export function FeatureSection(): React.JSX.Element {
       badge: 'DUAL-WINDOW SYSTEM'
     },
     {
+      icon: Sliders,
+      title: 'User-Controllable Background Opacity',
+      description:
+        'A dedicated slider lets you adjust the widget background from crisp solid white to a faint, faded transparent glass HUD. Background windows remain unobscured while the timer and stop controls stay razor-sharp.',
+      glowClass: 'neon-glow-cyan-sm',
+      accentColor: 'text-cyan-400',
+      badge: 'CUSTOM GLASS HUD'
+    },
+    {
       icon: Clock,
       title: 'Segmented Precision Format',
       description:
         'Displays days, hours, minutes, and seconds (00d:00h:00m:00s) with micro-labels so you always know your exact active duration at a glance.',
-      glowClass: 'neon-glow-cyan-sm',
-      accentColor: 'text-cyan-400',
+      glowClass: 'neon-glow-emerald',
+      accentColor: 'text-emerald-400',
       badge: 'LABELED SEGMENTS'
     },
     {
       icon: ShieldCheck,
       title: '100% Ephemeral In-Memory Privacy',
       description:
-        'Zero cloud sync, zero SQLite databases, and zero analytics telemetry. All daily task stamps live exclusively in RAM and reset to zero upon shutdown.',
-      glowClass: 'neon-glow-emerald',
-      accentColor: 'text-emerald-400',
+        'Zero cloud sync, zero SQLite databases, and zero analytics telemetry. All daily task stamps live exclusively in RAM and reset to zero upon desktop shutdown.',
+      glowClass: 'neon-glow-cyan-sm',
+      accentColor: 'text-cyan-400',
       badge: 'ZERO DISK FOOTPRINT'
     },
     {
@@ -44,18 +53,9 @@ export function FeatureSection(): React.JSX.Element {
       title: 'Launch on Windows Startup',
       description:
         'Optionally opens right as your desktop turns on, ready for one-click tracking. Stays tucked in the Windows notification tray until you need it.',
-      glowClass: 'neon-glow-cyan-sm',
-      accentColor: 'text-cyan-400',
-      badge: 'ONE-CLICK STARTUP'
-    },
-    {
-      icon: Move,
-      title: 'Draggable Anywhere on Screen',
-      description:
-        'Reposition the floating overlay widget anywhere across your multi-monitor desktop setup by grabbing the built-in tactile grip handle.',
       glowClass: 'neon-glow-emerald',
       accentColor: 'text-emerald-400',
-      badge: 'MULTI-MONITOR READY'
+      badge: 'ONE-CLICK STARTUP'
     }
   ]
 
@@ -107,7 +107,7 @@ export function FeatureSection(): React.JSX.Element {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-emerald-500/15 flex items-center gap-2 text-xs font-mono text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span>View documentation</span>
+                  <span>View guideline</span>
                   <span>→</span>
                 </div>
               </div>
